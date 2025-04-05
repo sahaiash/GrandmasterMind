@@ -1,0 +1,9 @@
+players={};
+1st player who is coming to website gets white colour in chess
+as white feild doesnt exsist so we'll create white feild after that
+2nd player come players.white exsist then at that time players.black will create
+and after that peoplle coming to game is the viewer orr spectator
+
+agar koi move hain then check it is valid move
+
+
