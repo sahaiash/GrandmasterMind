@@ -1,0 +1,334 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    min-height: 100vh;
+    color: #fff;
+    overflow-x: hidden;
+}
+
+.landing-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 100vh;
+}
+
+.content {
+    flex: 1;
+    padding-right: 4rem;
+}
+
+.title {
+    font-family: 'Playfair Display', serif;
+    font-size: 4.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: linear-gradient(45deg, #fff 30%, #a8b2d1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: fadeInUp 1s ease-out;
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    color: #a8b2d1;
+    margin-bottom: 2rem;
+    animation: fadeInUp 1s ease-out 0.2s backwards;
+}
+
+.description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #e2e8f0;
+    margin-bottom: 3rem;
+    max-width: 600px;
+    animation: fadeInUp 1s ease-out 0.4s backwards;
+}
+
+.features {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    animation: fadeInUp 1s ease-out 0.6s backwards;
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.feature-icon {
+    font-size: 1.5rem;
+    color: #a8b2d1;
+}
+
+.feature-text {
+    font-size: 1rem;
+    color: #e2e8f0;
+}
+
+.button-container {
+    display: flex;
+    gap: 1rem;
+    animation: fadeInUp 1s ease-out 0.8s backwards;
+}
+
+.play-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.play-button.online {
+    background: linear-gradient(45deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+}
+
+.play-button.bot {
+    background: linear-gradient(45deg, #2196F3 0%, #1976D2 100%);
+    color: white;
+}
+
+.play-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.button-icon {
+    font-size: 1.2rem;
+}
+
+.chess-preview {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 1s ease-out 1s backwards;
+}
+
+.board-preview {
+    width: 400px;
+    height: 400px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.board-preview::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+    animation: shimmer 2s infinite;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    background: rgba(26, 26, 46, 0.85);
+    padding: 2.5rem 2rem 2rem 2rem;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    max-width: 400px;
+    margin: 2rem auto 1.5rem auto;
+    align-items: stretch;
+}
+
+.input-field {
+    padding: 1rem 1.2rem;
+    border-radius: 8px;
+    border: none;
+    font-size: 1.1rem;
+    background: #23234a;
+    color: #fff;
+    margin-bottom: 0.5rem;
+    outline: none;
+    transition: box-shadow 0.2s;
+}
+.input-field:focus {
+    box-shadow: 0 0 0 2px #4CAF50;
+    background: #23234a;
+}
+
+.auth-form .play-button.online {
+    margin-top: 0.5rem;
+    width: 100%;
+    justify-content: center;
+}
+
+.auth-form .play-button.bot {
+    width: 100%;
+    justify-content: center;
+}
+
+.auth-form a.play-button.bot {
+    margin-top: 0.5rem;
+}
+
+.google-signup-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7em;
+    background: #fff;
+    color: #23234a;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.8em 0;
+    margin-bottom: 1.2em;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    font-size: 1.1rem;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+.google-signup-btn:hover {
+    box-shadow: 0 4px 16px rgba(33,150,243,0.15);
+    transform: translateY(-2px) scale(1.03);
+}
+
+.email-signup-btn {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 1.5em;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 1em 0;
+    background: linear-gradient(45deg, #4CAF50 0%, #45a049 100%);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: box-shadow 0.2s, transform 0.2s;
+    box-shadow: 0 2px 8px rgba(76,175,80,0.07);
+}
+.email-signup-btn:hover {
+    box-shadow: 0 4px 16px rgba(76,175,80,0.15);
+    transform: translateY(-2px) scale(1.03);
+}
+
+#email-signup {
+    margin-top: 0.5em;
+}
+
+.google-signup-btn, .email-signup-btn {
+    width: 100%;
+    max-width: 400px;
+    min-width: 200px;
+    box-sizing: border-box;
+}
+
+.auth-form {
+    max-width: 400px;
+    width: 100%;
+    min-width: 200px;
+    margin: 2rem auto 1.5rem auto;
+}
+
+@media (max-width: 600px) {
+    .google-signup-btn, .email-signup-btn, .auth-form {
+        max-width: 95vw;
+        min-width: 0;
+        padding-left: 0.5em;
+        padding-right: 0.5em;
+    }
+    .auth-form {
+        padding: 1.2rem 0.5rem 1rem 0.5rem;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@media (max-width: 1024px) {
+    .landing-container {
+        flex-direction: column;
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .content {
+        padding-right: 0;
+        margin-bottom: 3rem;
+    }
+
+    .description {
+        margin: 0 auto 3rem;
+    }
+
+    .features {
+        justify-content: center;
+    }
+
+    .title {
+        font-size: 3.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .title {
+        font-size: 2.5rem;
+    }
+
+    .subtitle {
+        font-size: 1.2rem;
+    }
+
+    .features {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .board-preview {
+        width: 300px;
+        height: 300px;
+    }
+} 

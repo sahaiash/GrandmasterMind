@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chess Game</title>
+    <link href="/css/tailwind.css" rel="stylesheet">
     <link href="/css/styles.css" rel="stylesheet">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     <style>
     .chessboard {
         display: grid;
@@ -60,16 +63,37 @@
     .flipped .piece {
         transform: rotate(180deg);
     }
-</style>
-    
+
+    /* Captured pieces container */
+    .captured-pieces {
+        width: 400px;
+        min-height: 50px;
+        margin: 10px auto;
+        padding: 10px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .captured-piece {
+        font-size: 24px;
+        opacity: 0.7;
+    }
+    </style>
 </head>
 <body>
-    <div class="w-full h-screen  flex item-center justify-center bg-zinc-900">
-    <div class="chessboard w-96 h-96 bg-red-400"></div>
+    <div class="w-full h-screen flex flex-col items-center justify-center bg-zinc-900">
+        <!-- Captured white pieces -->
+        <div id="capturedWhite" class="captured-pieces"></div>
+        
+        <!-- Chess board -->
+        <div class="chessboard"></div>
+        
+        <!-- Captured black pieces -->
+        <div id="capturedBlack" class="captured-pieces"></div>
     </div>
-    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js" 
-    integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+" crossorigin="anonymous"></script>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script> 
     <script src="/js/chessgame.js"></script>
 </body>
 </html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Grandmaster's Mind</title>
+    <link rel="stylesheet" href="/css/landing.css">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+</head>
+<body>
+    <div class="landing-container">
+        <div class="content">
+            <a href="/" style="text-decoration: none; display: flex; flex-direction: column; align-items: center;">
+                <div class="logo" style="text-align: center; margin-bottom: 1.5rem;">
+                    <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle;">
+                        <circle cx="32" cy="32" r="32" fill="#23234a"/>
+                        <text x="32" y="42" text-anchor="middle" font-size="32" fill="#fff" font-family="'Playfair Display', serif">♛</text>
+                    </svg>
+                    <span style="display: block; font-size: 1.3rem; color: #a8b2d1; font-family: 'Playfair Display', serif; margin-top: 0.3em; letter-spacing: 2px;">Grandmaster's Mind</span>
+                </div>
+            </a>
+            <h1 class="title" style="text-align: center;">Sign In</h1>
+            <form action="/login" method="POST" class="auth-form">
+                <input name="username" required placeholder="Username" class="input-field">
+                <input name="password" type="password" required placeholder="Password" class="input-field">
+                <button type="submit" class="play-button online">Sign In</button>
+            </form>
+            <div style="text-align: center; margin-top: 1.5em;">
+                <span style="font-size: 1.1rem; color: #a8b2d1;">New to Grandmaster's Mind?</span>
+                <a href="/register" class="play-button bot" style="margin-left: 0.7em; padding: 0.7rem 2rem; font-size: 1rem; display: inline-block;">Sign Up</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

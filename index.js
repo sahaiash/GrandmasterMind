@@ -11,6 +11,7 @@ const io = socket(server);
 const chess = new Chess();
 let players = {};
 let currPlayer = "W";
+let capturedPieces = { white: [], black: [] };
 
 // Game state
 const games = new Map();
@@ -26,17 +27,50 @@ app.use(express.static(path.join(__dirname, "public"), {
     }
 }));
 
+// Landing page route
 app.get("/", (req, res) => {
+    res.render("landing", { title: "Grandmaster's Mind" });
+});
+
+// Login page route
+app.get("/login", (req, res) => {
+    res.render("login", { title: "Login" });
+});
+
+// Register page route (Google only)
+app.get("/register", (req, res) => {
+    res.render("register", { title: "Sign Up" });
+});
+
+// Manual email signup page
+app.get("/register/email", (req, res) => {
+    res.render("register_email", { title: "Sign Up with Email" });
+});
+
+// Manual email signup POST handler (placeholder)
+app.post("/register/email", (req, res) => {
+    // TODO: Handle email/password registration logic
+    res.send('Email registration logic goes here.');
+});
+
+// Game route
+app.get("/game", (req, res) => {
     res.render("index", { title: "Chess Game" });
 });
 
 io.on("connection", function (uniquesocket) {
     console.log("connected");
     
-    // Handle board state requests
+    // Send initial board state and captured pieces
     uniquesocket.on('requestBoardState', () => {
-        console.log('Sending board state');
         uniquesocket.emit('boardstate', chess.fen());
+        uniquesocket.emit('capturedPieces', capturedPieces);
+    });
+
+    // Handle captured pieces
+    uniquesocket.on('pieceCaptured', (piece) => {
+        capturedPieces[piece.color === 'w' ? 'white' : 'black'].push(piece);
+        io.emit('pieceCaptured', piece);
     });
 
     if (!players.white) {
