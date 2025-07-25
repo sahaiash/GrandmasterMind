@@ -1,9 +1,22 @@
+require('dotenv').config();
 const express = require('express');
 const socket = require('socket.io');
 const http = require('http');
 const { Chess } = require('chess.js');
 const path = require('path');
-const { createDiffieHellmanGroup } = require('crypto');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+
+// Import configurations
+const connectDB = require('./config/database');
+const passport = require('./config/passport');
+
+// Import routes
+const authRoutes = require('./routes/auth');
+
+// Import middleware
+const { optionalAuth } = require('./middleware/auth');
+
 const app = express();
 const server = http.createServer(app);
 const io = socket(server);
@@ -14,6 +27,29 @@ let currPlayer = "W";
 
 // Game state
 const games = new Map();
+
+// Connect to database
+connectDB();
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+// Session configuration
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
+
+// Initialize passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.set("view engine", "ejs");
 
@@ -26,8 +62,56 @@ app.use(express.static(path.join(__dirname, "public"), {
     }
 }));
 
-app.get("/", (req, res) => {
-    res.render("index", { title: "Chess Game" });
+// Routes
+app.use('/auth', authRoutes);
+
+app.get("/", optionalAuth, (req, res) => {
+    res.render("index", { 
+        title: "GrandmasterMind - Chess Game",
+        user: req.user || null
+    });
+});
+
+app.get("/login", (req, res) => {
+    res.render("login", { 
+        title: "Login - GrandmasterMind"
+    });
+});
+
+app.get("/signup", (req, res) => {
+    res.render("signup", { 
+        title: "Sign Up - GrandmasterMind"
+    });
+});
+
+app.get("/game", optionalAuth, (req, res) => {
+    if (!req.user) {
+        return res.redirect('/login');
+    }
+    res.render("game", { 
+        title: "Chess Game - GrandmasterMind",
+        user: req.user
+    });
+});
+
+app.get("/logout", (req, res) => {
+    res.redirect('/');
+});
+
+// Socket.IO with authentication
+io.use((socket, next) => {
+  // Optional authentication for socket connections
+  const token = socket.handshake.auth.token;
+  if (token) {
+    try {
+      const { verifyToken } = require('./config/jwt');
+      const decoded = verifyToken(token);
+      socket.userId = decoded.userId;
+    } catch (error) {
+      // Continue without authentication
+    }
+  }
+  next();
 });
 
 io.on("connection", function (uniquesocket) {
@@ -80,6 +164,7 @@ io.on("connection", function (uniquesocket) {
     });
 });
 
-server.listen(3000, function () {
-    console.log("listening on port 3000");
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, function () {
+    console.log(`Server listening on port ${PORT}`);
 }); 

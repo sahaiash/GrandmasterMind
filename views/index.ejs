@@ -3,73 +3,550 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chess Game</title>
+    <title>GrandmasterMind - Chess Game</title>
+    <!-- Favicon: Chess King SVG -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect x='18' y='38' width='12' height='4' rx='2' fill='%23333'/%3E%3Crect x='20' y='34' width='8' height='4' rx='2' fill='%23b58863'/%3E%3Crect x='22' y='12' width='4' height='22' rx='2' fill='%23f0d9b5'/%3E%3Crect x='20' y='8' width='8' height='6' rx='2' fill='%23b58863'/%3E%3Crect x='23' y='4' width='2' height='6' rx='1' fill='%23333'/%3E%3C/svg%3E">
     <link href="/css/styles.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-    .chessboard {
-        display: grid;
-        grid-template-columns: repeat(8, minmax(0, 1fr));
-        grid-template-rows: repeat(8, minmax(0, 1fr));
-        width: 400px;
-        height: 400px;
-        transform: rotate(0deg);
-        margin: auto;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    .piece.white {
-        color: white;
-        filter: drop-shadow(0 0 2px rgba(0, 0, 0, 1));
-    }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            color: #333;
+            background: linear-gradient(120deg, #667eea 0%, #764ba2 100%, #43cea2 100%);
+            background-size: 200% 200%;
+            animation: animatedGradient 12s ease-in-out infinite;
+            position: relative;
+        }
 
-    .piece.black {
-        color: black;
-    }
+        @keyframes animatedGradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
 
-    .flipped {
-        transform: rotate(180deg);
-    }
+        /* SVG Blob Overlay */
+        .background-blob {
+            position: fixed;
+            top: -120px;
+            left: -120px;
+            width: 600px;
+            height: 600px;
+            z-index: 0;
+            opacity: 0.18;
+            pointer-events: none;
+        }
+        .background-blob2 {
+            position: fixed;
+            bottom: -140px;
+            right: -140px;
+            width: 700px;
+            height: 700px;
+            z-index: 0;
+            opacity: 0.13;
+            pointer-events: none;
+        }
 
-    .square {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(34, 34, 34, 0.82);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 24px rgba(67, 206, 162, 0.10);
+        }
 
-    .square.light {
-        background-color: #f0d9b5;
-    }
+        .logo {
+            font-size: 1.7rem;
+            font-weight: 900;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 8px rgba(67,206,162,0.12);
+        }
 
-    .square.dark {
-        background-color: #b58863;
-    }
+        .logo i {
+            font-size: 2rem;
+        }
 
-    .piece {
-        font-size: 36px;
-        cursor: pointer;
-    }
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
 
-    .piece.draggable {
-        cursor: grab;
-    }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
-    .dragging {
-        opacity: 0.5;
-    }
+        .btn-outline {
+            background: transparent;
+            color: #fff;
+            border: 2px solid #fff;
+            font-weight: 700;
+        }
 
-    /* Rotate pieces for black player */
-    .flipped .piece {
-        transform: rotate(180deg);
-    }
-</style>
-    
+        .btn-outline:hover {
+            background: linear-gradient(90deg, #667eea 0%, #43cea2 100%);
+            color: #fff;
+            border: 2px solid #43cea2;
+            transform: translateY(-2px) scale(1.04);
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #667eea 0%, #43cea2 100%);
+            color: #fff;
+            font-weight: 800;
+            border: none;
+            box-shadow: 0 2px 12px rgba(67, 206, 162, 0.12);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #43cea2 0%, #667eea 100%);
+            color: #fff;
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 8px 24px rgba(67, 206, 162, 0.18);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 4vw;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            flex: 1 1 0;
+            max-width: 520px;
+            text-align: left;
+            z-index: 3;
+            position: relative;
+            padding: 2.5rem 2.5rem 2.5rem 2rem;
+            margin-right: 2.5rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 1rem;
+            text-shadow: 0 6px 18px rgba(76, 40, 133, 0.25), 0 1px 0 #222;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: #f3f3f3;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            line-height: 1.7;
+            text-shadow: 0 2px 8px rgba(76,40,133,0.18);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
+
+        /* Chess Board Animation */
+        .chess-animation {
+            flex: 0 0 360px;
+            width: 360px;
+            height: 360px;
+            min-width: 260px;
+            min-height: 260px;
+            max-width: 420px;
+            max-height: 420px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            top: auto;
+            left: auto;
+            transform: none;
+            opacity: 1;
+            z-index: 1;
+            filter: drop-shadow(0 8px 32px rgba(102, 126, 234, 0.25));
+        }
+
+        .chess-board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            width: 340px;
+            height: 340px;
+            border-radius: 24px;
+            border: 4px solid rgba(102, 126, 234, 0.7);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(12px);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chess-square {
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s cubic-bezier(0.4,0,0.2,1), background 0.3s;
+        }
+        .chess-square.light {
+            background: linear-gradient(135deg, #f0d9b5 60%, #fffbe6 100%);
+        }
+        .chess-square.dark {
+            background: linear-gradient(135deg, #b58863 60%, #a07a50 100%);
+        }
+        .chess-square.animated {
+            opacity: 1 !important;
+        }
+        .floating-piece {
+            position: absolute;
+            top: 18%;
+            left: 60%;
+            transform: translate(-50%, -50%) scale(1.2);
+            z-index: 2;
+            pointer-events: none;
+            filter: drop-shadow(0 4px 16px rgba(102, 126, 234, 0.25));
+            animation: floatPiece 2.5s ease-in-out infinite alternate;
+        }
+        @keyframes floatPiece {
+            0% { transform: translate(-50%, -50%) scale(1.2) translateY(0); }
+            100% { transform: translate(-50%, -50%) scale(1.2) translateY(-18px); }
+        }
+        /* Hero Section Gradient Overlay */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(120deg, rgba(102,126,234,0.25) 0%, rgba(118,75,162,0.18) 100%);
+            z-index: 0;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 4rem 2rem;
+            background: white;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #333;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.13);
+            box-shadow: 0 2px 16px rgba(67, 206, 162, 0.08);
+            color: #fff;
+            transition: transform 0.3s ease, background 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px) scale(1.03);
+            background: rgba(102,126,234,0.13);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: #43cea2;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+            font-weight: 800;
+            text-shadow: 0 2px 8px rgba(67,206,162,0.12);
+        }
+
+        .feature-card p {
+            color: #f3f3f3;
+            font-weight: 500;
+            line-height: 1.6;
+            text-shadow: 0 1px 4px rgba(67,206,162,0.10);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero {
+                flex-direction: column;
+                padding: 2rem 1rem;
+            }
+            .hero-content {
+                margin-right: 0;
+                margin-bottom: 2rem;
+                text-align: center;
+                padding: 2rem 1rem;
+            }
+            .chess-animation {
+                width: 90vw;
+                height: 90vw;
+                min-width: 180px;
+                min-height: 180px;
+                max-width: 98vw;
+                max-height: 98vw;
+                margin: 0 auto;
+            }
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .hero p {
+                font-size: 1.1rem;
+            }
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            .nav-buttons {
+                gap: 0.5rem;
+            }
+            .btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* User Info (if logged in) */
+        .user-info {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <div class="w-full h-screen  flex item-center justify-center bg-zinc-900">
-    <div class="chessboard w-96 h-96 bg-red-400"></div>
+    <!-- Animated SVG Blobs for background -->
+    <svg class="background-blob" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+      <g transform="translate(300,300)">
+        <path d="M120,-180C160,-140,200,-100,200,-60C200,-20,160,20,120,60C80,100,40,140,0,180C-40,220,-80,260,-120,220C-160,180,-200,140,-200,100C-200,60,-160,20,-120,-20C-80,-60,-40,-100,0,-140C40,-180,80,-220,120,-180Z" fill="#fff"/>
+      </g>
+    </svg>
+    <svg class="background-blob2" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
+      <g transform="translate(350,350)">
+        <path d="M180,-220C220,-180,260,-140,260,-100C260,-60,220,-20,180,20C140,60,100,100,60,140C20,180,-20,220,-60,180C-100,140,-140,100,-140,60C-140,20,-100,-20,-60,-60C-20,-100,20,-140,60,-180C100,-220,140,-260,180,-220Z" fill="#fff"/>
+      </g>
+    </svg>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="/" class="logo" style="text-decoration: none;">
+            <i class="fas fa-chess-king"></i>
+            GrandmasterMind
+        </a>
+        <div class="nav-buttons">
+            <% if (!user) { %>
+                <a href="/login" class="btn btn-outline">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login
+                </a>
+                <a href="/signup" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i>
+                    Sign Up
+                </a>
+            <% } else { %>
+                <a href="/game" class="btn btn-primary">
+                    <i class="fas fa-play"></i>
+                    Play Game
+                </a>
+                <a href="/logout" class="btn btn-outline">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            <% } %>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Master the Game of Kings</h1>
+            <p>Challenge players worldwide in real-time chess matches. Improve your strategy, track your progress, and become a true grandmaster.</p>
+            <div class="hero-buttons">
+                <% if (!user) { %>
+                    <a href="/signup" class="btn btn-primary btn-large">
+                        <i class="fas fa-rocket"></i>
+                        Start Playing
+                    </a>
+                    <a href="/login" class="btn btn-outline btn-large">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Login
+                    </a>
+                <% } else { %>
+                    <a href="/game" class="btn btn-primary btn-large">
+                        <i class="fas fa-play"></i>
+                        Continue Playing
+                    </a>
+                    <a href="/profile" class="btn btn-outline btn-large">
+                        <i class="fas fa-user"></i>
+                        View Profile
+                    </a>
+                <% } %>
+            </div>
+        </div>
+        <!-- Chess Board Animation -->
+        <div class="chess-animation">
+            <div class="chess-board">
+                <% for(let i = 0; i < 8; i++) { %>
+                    <% for(let j = 0; j < 8; j++) { %>
+                        <div class="chess-square <%= (i + j) % 2 === 0 ? 'light' : 'dark' %>"></div>
+                    <% } %>
+                <% } %>
+                <!-- Floating Chess Piece (SVG King) -->
+                <div class="floating-piece">
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g filter="url(#shadow)">
+                        <rect x="18" y="38" width="12" height="4" rx="2" fill="#333"/>
+                        <rect x="20" y="34" width="8" height="4" rx="2" fill="#b58863"/>
+                        <rect x="22" y="12" width="4" height="22" rx="2" fill="#f0d9b5"/>
+                        <rect x="20" y="8" width="8" height="6" rx="2" fill="#b58863"/>
+                        <rect x="23" y="4" width="2" height="6" rx="1" fill="#333"/>
+                        </g>
+                        <defs>
+                        <filter id="shadow" x="0" y="0" width="48" height="48" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                            <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#667eea" flood-opacity="0.18"/>
+                        </filter>
+                        </defs>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <h2>Why Choose GrandmasterMind?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <h3>Global Community</h3>
+                <p>Play against chess enthusiasts from around the world and make new friends.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Track Progress</h3>
+                <p>Monitor your games played, wins, and improvement over time with detailed statistics.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Secure & Private</h3>
+                <p>Your data is protected with industry-standard security and privacy measures.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chess-board"></i>
+                </div>
+                <h3>Play Anywhere</h3>
+                <p>Access your games from any device - desktop, tablet, or mobile phone.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- User Info (if logged in) -->
+    <% if (user) { %>
+    <div class="user-info">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <% if (user.avatar) { %>
+                <img src="<%= user.avatar %>" alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%;">
+            <% } %>
+            <div>
+                <div style="font-weight: 600;"><%= user.name %></div>
+                <div style="font-size: 0.8rem; color: #666;"><%= user.email %></div>
+            </div>
+        </div>
     </div>
-    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js" 
-    integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+" crossorigin="anonymous"></script>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script> 
-    <script src="/js/chessgame.js"></script>
+    <% } %>
+
+    <script>
+        // Add some interactive animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate chess squares in a wave
+            const squares = document.querySelectorAll('.chess-square');
+            squares.forEach((square, index) => {
+                setTimeout(() => {
+                    square.classList.add('animated');
+                }, 80 * (index % 8) + 30 * Math.floor(index / 8));
+            });
+
+            // Smooth scroll for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 </html>

@@ -1,9 +1,18 @@
-const socket=io();
-const chess=new Chess();
-const boardElement=document.querySelector(".chessboard");
+// Get authentication token
+const authToken = localStorage.getItem('authToken');
 
-let draggedPiece=null;
-let sourceSquare=null;
+// Connect to socket with authentication
+const socket = io({
+  auth: {
+    token: authToken
+  }
+});
+
+const chess = new Chess();
+const boardElement = document.querySelector(".chessboard");
+
+let draggedPiece = null;
+let sourceSquare = null;
 let playerRole = 'W'; // Changed to match server's case
 
 // Add socket connection check
@@ -17,6 +26,16 @@ socket.on('disconnect', () => {
     console.log('Disconnected from server');
 });
 
+// Handle authentication errors
+socket.on('auth_error', (error) => {
+    console.error('Authentication error:', error);
+    // Redirect to login if authentication fails
+    if (error.message === 'Invalid token') {
+        localStorage.removeItem('authToken');
+        location.reload();
+    }
+});
+
 // Initialize the game
 const initGame = () => {
     console.log("Initializing game");
@@ -25,69 +44,69 @@ const initGame = () => {
     socket.emit('requestBoardState');
 };
 
-const render=()=>{
-  const board=chess.board();
-  boardElement.innerHTML="";
+const render = () => {
+  const board = chess.board();
+  boardElement.innerHTML = "";
   console.log("Rendering board:", board);
-  board.forEach((row,rowindex)=>{
-    row.forEach((square,squareindex)=>{
-      const squareElement=document.createElement("div");
+  board.forEach((row, rowindex) => {
+    row.forEach((square, squareindex) => {
+      const squareElement = document.createElement("div");
       squareElement.classList.add("square",
-      (rowindex+squareindex)%2==0 ?"light":"dark"
-    );
-    squareElement.dataset.row=rowindex;
-    squareElement.dataset.col=squareindex;
-    if(square){
-      const pieceElement=document.createElement("div");
-      pieceElement.classList.add("piece",square.color==='w'?"white":"black");
-      pieceElement.innerText=getUnicode(square);
-      pieceElement.draggable=playerRole.toLowerCase()===square.color; // Case-insensitive comparison
-      console.log("Piece draggable:", pieceElement.draggable, "playerRole:", playerRole, "piece color:", square.color);
+        (rowindex + squareindex) % 2 == 0 ? "light" : "dark"
+      );
+      squareElement.dataset.row = rowindex;
+      squareElement.dataset.col = squareindex;
+      if (square) {
+        const pieceElement = document.createElement("div");
+        pieceElement.classList.add("piece", square.color === 'w' ? "white" : "black");
+        pieceElement.innerText = getUnicode(square);
+        pieceElement.draggable = playerRole.toLowerCase() === square.color; // Case-insensitive comparison
+        console.log("Piece draggable:", pieceElement.draggable, "playerRole:", playerRole, "piece color:", square.color);
+        
+        pieceElement.addEventListener("dragstart", (e) => {
+          if (pieceElement.draggable) {
+            console.log("Drag started");
+            draggedPiece = pieceElement;
+            sourceSquare = { row: rowindex, col: squareindex };
+            e.dataTransfer.setData("text/plain", "");
+          }
+        });
+        
+        pieceElement.addEventListener("dragend", (e) => {
+          console.log("Drag ended");
+          draggedPiece = null;
+          sourceSquare = null;
+        });
+        
+        squareElement.appendChild(pieceElement);
+      }
       
-      pieceElement.addEventListener("dragstart",(e)=>{
-        if(pieceElement.draggable){
-          console.log("Drag started");
-          draggedPiece=pieceElement;
-          sourceSquare={row:rowindex,col:squareindex};
-          e.dataTransfer.setData("text/plain","");
-        }
-      });
-      
-      pieceElement.addEventListener("dragend",(e)=>{
-        console.log("Drag ended");
-        draggedPiece=null;
-        sourceSquare=null;
-      });
-      
-      squareElement.appendChild(pieceElement);
-    }
-    
-    squareElement.addEventListener("dragover", function(e) {
+      squareElement.addEventListener("dragover", function(e) {
         e.preventDefault();
-    });
-    
-    squareElement.addEventListener("drop", function(e) {
+      });
+      
+      squareElement.addEventListener("drop", function(e) {
         e.preventDefault();
         console.log("Drop event triggered"); // Debugging line
         if (draggedPiece) {
-            const targetSource = {
-                row: parseInt(squareElement.dataset.row),
-                col: parseInt(squareElement.dataset.col),
-            };
-            console.log("Target source:", targetSource); // Debugging line
-            handleMove(sourceSquare, targetSource);
+          const targetSource = {
+            row: parseInt(squareElement.dataset.row),
+            col: parseInt(squareElement.dataset.col),
+          };
+          console.log("Target source:", targetSource); // Debugging line
+          handleMove(sourceSquare, targetSource);
         }
-    });
-    
-    boardElement.appendChild(squareElement);
+      });
+      
+      boardElement.appendChild(squareElement);
     });
   });
 };
 
-const handleMove=(source,target)=>{
-  const move={
-    from:`${String.fromCharCode(97+source.col)}${8-source.row}`,
-    to:`${String.fromCharCode(97+target.col)}${8-target.row}`,
+const handleMove = (source, target) => {
+  const move = {
+    from: `${String.fromCharCode(97 + source.col)}${8 - source.row}`,
+    to: `${String.fromCharCode(97 + target.col)}${8 - target.row}`,
     promotion: 'q' // Fixed: Added quotes around 'q'
   }
   console.log("Handling move:", move); // Debugging line
@@ -108,7 +127,7 @@ const handleMove=(source,target)=>{
   }
 };
 
-const getUnicode=(piece)=>{
+const getUnicode = (piece) => {
   const unicode = {
     k: "♔", // King
     q: "♕", // Queen
@@ -128,25 +147,25 @@ const getUnicode=(piece)=>{
   return result;
 };
 
-socket.on("playerRole",function(role){
+socket.on("playerRole", function(role) {
   console.log("Received player role:", role);
-  playerRole=role;
+  playerRole = role;
   render();
 });
 
-socket.on("spectator role",function(){
+socket.on("spectator role", function() {
   console.log("Received spectator role");
-  playerRole=null;
+  playerRole = null;
   render();
 });
 
-socket.on("move",function(move){
+socket.on("move", function(move) {
   console.log("Received move from server:", move);
   chess.move(move);
   render();
 });
 
-socket.on("boardstate",function(fen){
+socket.on("boardstate", function(fen) {
   console.log("Received board state:", fen);
   chess.load(fen);
   render();
