@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grandmaster's Mind - Chess Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/landing.css">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+</head>
+<body>
+    <div style="position: absolute; top: 2rem; left: 2rem; z-index: 10;">
+        <a href="/" style="text-decoration: none; display: flex; align-items: center; gap: 0.5em;">
+            <svg width="44" height="44" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle;">
+                <circle cx="32" cy="32" r="32" fill="#23234a"/>
+                <text x="32" y="42" text-anchor="middle" font-size="32" fill="#fff" font-family="'Playfair Display', serif">♛</text>
+            </svg>
+            <span style="font-size: 1.1rem; color: #a8b2d1; font-family: 'Playfair Display', serif; letter-spacing: 2px; font-weight: 600;">Grandmaster's Mind</span>
+        </a>
+    </div>
+    <div class="landing-container">
+        <div style="position: absolute; top: 2rem; right: 2rem; display: flex; gap: 1rem;">
+            <a href="/login" class="play-button online" style="padding: 0.7rem 2rem; font-size: 1rem;">Login</a>
+            <a href="/register" class="play-button bot" style="padding: 0.7rem 2rem; font-size: 1rem;">Sign Up</a>
+        </div>
+        <div class="content">
+            <h1 class="title" style="margin-top: 0;">Grandmaster's Mind</h1>
+            <p class="subtitle">Where Strategy Meets Elegance</p>
+            <div class="description">
+                <p>Experience the timeless game of chess in a modern setting. Challenge your mind, master your strategy, and become a true grandmaster.</p>
+            </div>
+            <div class="features">
+                <div class="feature">
+                    <span class="feature-icon">♞</span>
+                    <span class="feature-text">Real-time Multiplayer</span>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">♛</span>
+                    <span class="feature-text">Beautiful Interface</span>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">♜</span>
+                    <span class="feature-text">Smart Moves</span>
+                </div>
+            </div>
+            <div class="button-container">
+                <a href="/game" class="play-button online">
+                    <span class="button-icon">👥</span>
+                    Play Online
+                </a>
+                <a href="/game?mode=bot" class="play-button bot">
+                    <span class="button-icon">🤖</span>
+                    Play with Bot
+                </a>
+            </div>
+        </div>
+        <div class="chess-preview">
+            <div class="board-preview"></div>
+        </div>
+    </div>
+</body>
+</html> 

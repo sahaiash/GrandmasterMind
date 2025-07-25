@@ -3,11 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
     <title>GrandmasterMind - Chess Game</title>
     <!-- Favicon: Chess King SVG -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect x='18' y='38' width='12' height='4' rx='2' fill='%23333'/%3E%3Crect x='20' y='34' width='8' height='4' rx='2' fill='%23b58863'/%3E%3Crect x='22' y='12' width='4' height='22' rx='2' fill='%23f0d9b5'/%3E%3Crect x='20' y='8' width='8' height='6' rx='2' fill='%23b58863'/%3E%3Crect x='23' y='4' width='2' height='6' rx='1' fill='%23333'/%3E%3C/svg%3E">
     <link href="/css/styles.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+=======
+    <title>Chess Game</title>
+    <link href="/css/tailwind.css" rel="stylesheet">
+    <link href="/css/styles.css" rel="stylesheet">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+>>>>>>> e77c3f5237e791f6e5ea0f92c81e3b814919217d
     <style>
         * {
             margin: 0;
@@ -116,6 +124,7 @@
             font-weight: 700;
         }
 
+<<<<<<< HEAD
         .btn-outline:hover {
             background: linear-gradient(90deg, #667eea 0%, #43cea2 100%);
             color: #fff;
@@ -548,5 +557,43 @@
             });
         });
     </script>
+=======
+    /* Rotate pieces for black player */
+    .flipped .piece {
+        transform: rotate(180deg);
+    }
+
+    /* Captured pieces container */
+    .captured-pieces {
+        width: 400px;
+        min-height: 50px;
+        margin: 10px auto;
+        padding: 10px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .captured-piece {
+        font-size: 24px;
+        opacity: 0.7;
+    }
+    </style>
+</head>
+<body>
+    <div class="w-full h-screen flex flex-col items-center justify-center bg-zinc-900">
+        <!-- Captured white pieces -->
+        <div id="capturedWhite" class="captured-pieces"></div>
+        
+        <!-- Chess board -->
+        <div class="chessboard"></div>
+        
+        <!-- Captured black pieces -->
+        <div id="capturedBlack" class="captured-pieces"></div>
+    </div>
+    <script src="/js/chessgame.js"></script>
+>>>>>>> e77c3f5237e791f6e5ea0f92c81e3b814919217d
 </body>
 </html>
