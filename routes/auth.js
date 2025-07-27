@@ -119,8 +119,8 @@ router.get('/google/callback',
     // Successful authentication
     const token = generateToken(req.user._id);
     
-    // Redirect to frontend with token
-    res.redirect(`/?token=${token}`);
+    // Redirect to game page with token
+    res.redirect(`/game?token=${token}`);
   }
 );
 

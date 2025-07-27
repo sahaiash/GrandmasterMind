@@ -101,6 +101,42 @@
             border-color: #10b981;
         }
 
+        .password-input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        .password-toggle:hover {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .password-toggle:focus {
+            outline: none;
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .password-input-container input {
+            padding-right: 3rem;
+        }
+            border-color: #10b981;
+        }
+
         .password-strength {
             margin-top: 0.5rem;
             font-size: 0.8rem;
@@ -344,7 +380,12 @@
 
                 <div class="form-group full-width">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required minlength="6">
+                    <div class="password-input-container">
+                        <input type="password" id="password" name="password" required minlength="6">
+                        <button type="button" class="password-toggle" id="passwordToggle">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                     <div class="password-strength">
                         <div class="strength-bar">
                             <div class="strength-fill" id="strengthFill"></div>
@@ -355,7 +396,12 @@
 
                 <div class="form-group full-width">
                     <label for="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                    <div class="password-input-container">
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <button type="button" class="password-toggle" id="confirmPasswordToggle">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="terms-checkbox">
@@ -436,6 +482,29 @@
                 submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
             }
         }
+
+        // Password toggle functionality
+        function setupPasswordToggle(inputId, toggleId) {
+            const passwordInput = document.getElementById(inputId);
+            const passwordToggle = document.getElementById(toggleId);
+            const toggleIcon = passwordToggle.querySelector('i');
+
+            passwordToggle.addEventListener('click', function() {
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    toggleIcon.className = 'fas fa-eye-slash';
+                    passwordToggle.setAttribute('aria-label', 'Hide password');
+                } else {
+                    passwordInput.type = 'password';
+                    toggleIcon.className = 'fas fa-eye';
+                    passwordToggle.setAttribute('aria-label', 'Show password');
+                }
+            });
+        }
+
+        // Setup password toggles
+        setupPasswordToggle('password', 'passwordToggle');
+        setupPasswordToggle('confirmPassword', 'confirmPasswordToggle');
 
         function signupWithGoogle() {
             window.location.href = '/auth/google';
@@ -574,7 +643,7 @@
                     localStorage.setItem('authToken', data.token);
                     showSuccess('Account created successfully! Redirecting to game...');
                     setTimeout(() => {
-                        window.location.href = '/game';
+                        window.location.href = `/game?token=${data.token}`;
                     }, 1500);
                 } else {
                     showError(data.message || 'Registration failed. Please try again.');

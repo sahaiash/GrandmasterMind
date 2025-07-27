@@ -44,14 +44,32 @@
                 </div>
             </div>
             <div class="button-container">
-                <a href="/game" class="play-button online">
-                    <span class="button-icon">👥</span>
-                    Play Online
-                </a>
-                <a href="/game?mode=bot" class="play-button bot">
-                    <span class="button-icon">🤖</span>
-                    Play with Bot
-                </a>
+                <div class="game-modes">
+                    <h3 class="modes-title">Choose Your Game Mode</h3>
+                    <div class="mode-buttons">
+                        <a href="/game?mode=local" class="play-button offline">
+                            <span class="button-icon">🎮</span>
+                            <div class="button-content">
+                                <span class="button-title">Local Game</span>
+                                <span class="button-subtitle">Play offline on same device</span>
+                            </div>
+                        </a>
+                        <a href="/game?mode=online" class="play-button online">
+                            <span class="button-icon">🌐</span>
+                            <div class="button-content">
+                                <span class="button-title">Online Multiplayer</span>
+                                <span class="button-subtitle">Play with friends online</span>
+                            </div>
+                        </a>
+                        <a href="/game?mode=bot" class="play-button bot">
+                            <span class="button-icon">🤖</span>
+                            <div class="button-content">
+                                <span class="button-title">AI Challenge</span>
+                                <span class="button-subtitle">Play against computer</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="chess-preview">

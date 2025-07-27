@@ -3,19 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
-    <title>GrandmasterMind - Chess Game</title>
+    <title><%= title %></title>
     <!-- Favicon: Chess King SVG -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect x='18' y='38' width='12' height='4' rx='2' fill='%23333'/%3E%3Crect x='20' y='34' width='8' height='4' rx='2' fill='%23b58863'/%3E%3Crect x='22' y='12' width='4' height='22' rx='2' fill='%23f0d9b5'/%3E%3Crect x='20' y='8' width='8' height='6' rx='2' fill='%23b58863'/%3E%3Crect x='23' y='4' width='2' height='6' rx='1' fill='%23333'/%3E%3C/svg%3E">
     <link href="/css/styles.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-=======
-    <title>Chess Game</title>
-    <link href="/css/tailwind.css" rel="stylesheet">
-    <link href="/css/styles.css" rel="stylesheet">
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
->>>>>>> e77c3f5237e791f6e5ea0f92c81e3b814919217d
     <style>
         * {
             margin: 0;
@@ -26,45 +18,38 @@
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
-            color: #333;
-            background: linear-gradient(120deg, #667eea 0%, #764ba2 100%, #43cea2 100%);
-            background-size: 200% 200%;
-            animation: animatedGradient 12s ease-in-out infinite;
-            position: relative;
+            background: linear-gradient(120deg, #4f46e5 0%, #7c3aed 50%, #06b6d4 100%);
+            background-size: 400% 400%;
+            animation: animatedGradient 16s ease-in-out infinite;
+            overflow-x: hidden;
         }
 
         @keyframes animatedGradient {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
+            0% { background-position: 0% 50%; }
+            25% { background-position: 50% 100%; }
+            50% { background-position: 100% 50%; }
+            75% { background-position: 50% 0%; }
+            100% { background-position: 0% 50%; }
         }
 
-        /* SVG Blob Overlay */
-        .background-blob {
+        /* SVG Blob Overlays */
+        .background-blob, .background-blob2 {
+            pointer-events: none;
             position: fixed;
-            top: -120px;
-            left: -120px;
-            width: 600px;
-            height: 600px;
             z-index: 0;
             opacity: 0.18;
-            pointer-events: none;
+            animation: blobFloat 18s ease-in-out infinite alternate;
+        }
+        .background-blob {
+            top: -120px; left: -120px; width: 600px; height: 600px;
         }
         .background-blob2 {
-            position: fixed;
-            bottom: -140px;
-            right: -140px;
-            width: 700px;
-            height: 700px;
-            z-index: 0;
-            opacity: 0.13;
-            pointer-events: none;
+            bottom: -140px; right: -140px; width: 700px; height: 700px; opacity: 0.13;
+            animation-delay: 4s;
+        }
+        @keyframes blobFloat {
+            0% { transform: scale(1) translateY(0); }
+            100% { transform: scale(1.08) translateY(-30px); }
         }
 
         /* Navigation */
@@ -74,77 +59,85 @@
             left: 0;
             right: 0;
             background: rgba(34, 34, 34, 0.82);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 1000;
-            box-shadow: 0 2px 24px rgba(67, 206, 162, 0.10);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         }
 
         .logo {
-            font-size: 1.7rem;
-            font-weight: 900;
-            color: #fff;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            letter-spacing: 1px;
-            text-shadow: 0 2px 8px rgba(67,206,162,0.12);
+            gap: 0.75rem;
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: 900;
+            text-shadow: 0 2px 8px rgba(67, 206, 162, 0.18), 0 1px 0 #222;
         }
 
-        .logo i {
-            font-size: 2rem;
+        .logo svg {
+            width: 32px;
+            height: 32px;
+            filter: drop-shadow(0 2px 8px rgba(67, 206, 162, 0.18));
         }
 
         .nav-buttons {
             display: flex;
             gap: 1rem;
+            align-items: center;
         }
 
         .btn {
             padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            border-radius: 12px;
+            font-weight: 700;
             text-decoration: none;
+            transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
         }
 
         .btn-outline {
             background: transparent;
             color: #fff;
-            border: 2px solid #fff;
-            font-weight: 700;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
         }
 
-<<<<<<< HEAD
         .btn-outline:hover {
-            background: linear-gradient(90deg, #667eea 0%, #43cea2 100%);
-            color: #fff;
-            border: 2px solid #43cea2;
-            transform: translateY(-2px) scale(1.04);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
         }
 
         .btn-primary {
-            background: linear-gradient(90deg, #667eea 0%, #43cea2 100%);
+            background: linear-gradient(90deg, #43cea2 0%, #667eea 100%);
             color: #fff;
             font-weight: 800;
             border: none;
-            box-shadow: 0 2px 12px rgba(67, 206, 162, 0.12);
+            box-shadow: 0 4px 16px rgba(67, 206, 162, 0.18);
         }
 
         .btn-primary:hover {
-            background: linear-gradient(90deg, #43cea2 0%, #667eea 100%);
-            color: #fff;
+            background: linear-gradient(90deg, #667eea 0%, #43cea2 100%);
             transform: translateY(-2px) scale(1.04);
-            box-shadow: 0 8px 24px rgba(67, 206, 162, 0.18);
+            box-shadow: 0 8px 24px rgba(67, 206, 162, 0.25);
+        }
+
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
         }
 
         /* Hero Section */
@@ -154,234 +147,421 @@
             flex-direction: row;
             align-items: center;
             justify-content: center;
-            padding: 2rem 4vw;
+            padding: 8rem 2rem 4rem 2rem;
+            gap: 4rem;
             position: relative;
-            overflow: hidden;
+            z-index: 1;
         }
 
         .hero-content {
-            flex: 1 1 0;
-            max-width: 520px;
+            flex: 1;
+            max-width: 500px;
             text-align: left;
-            z-index: 3;
-            position: relative;
-            padding: 2.5rem 2.5rem 2.5rem 2rem;
-            margin-right: 2.5rem;
+            opacity: 0;
+            transform: translateY(40px);
+            animation: fadeSlideDown 1.1s cubic-bezier(.4,0,.2,1) 0.2s both;
         }
 
-        .hero h1 {
+        .game-title {
             font-size: 3.5rem;
             font-weight: 900;
-            color: #fff;
             margin-bottom: 1rem;
-            text-shadow: 0 6px 18px rgba(76, 40, 133, 0.25), 0 1px 0 #222;
+            background: linear-gradient(90deg, #43cea2 0%, #667eea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 16px rgba(67, 206, 162, 0.18);
+            animation: fadeSlideLeft 1.1s cubic-bezier(.4,0,.2,1) 0.4s both;
         }
 
-        .hero p {
-            font-size: 1.25rem;
+        .hero-subtitle {
+            font-size: 1.3rem;
             color: #f3f3f3;
-            font-weight: 500;
             margin-bottom: 2rem;
-            line-height: 1.7;
-            text-shadow: 0 2px 8px rgba(76,40,133,0.18);
+            font-weight: 600;
+            text-shadow: 0 2px 8px rgba(67, 206, 162, 0.15);
+            line-height: 1.6;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeSlideUp 1.1s cubic-bezier(.4,0,.2,1) 0.7s both;
         }
 
         .hero-buttons {
             display: flex;
             gap: 1rem;
-            justify-content: center;
             flex-wrap: wrap;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeSlideUp 1.1s cubic-bezier(.4,0,.2,1) 1.1s both;
         }
 
-        .btn-large {
-            padding: 1rem 2rem;
-            font-size: 1.1rem;
-        }
-
-        /* Chess Board Animation */
-        .chess-animation {
-            flex: 0 0 360px;
-            width: 360px;
-            height: 360px;
-            min-width: 260px;
-            min-height: 260px;
-            max-width: 420px;
-            max-height: 420px;
+        .chess-section {
+            flex: 1;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            animation: fadeSlideRight 1.2s cubic-bezier(.4,0,.2,1) 0.7s both;
+        }
+
+        .chess-board-container {
             position: relative;
-            top: auto;
-            left: auto;
-            transform: none;
-            opacity: 1;
-            z-index: 1;
-            filter: drop-shadow(0 8px 32px rgba(102, 126, 234, 0.25));
+            display: inline-block;
+            opacity: 0;
+            transform: scale(0.92) translateY(40px);
+            animation: boardPopIn 1.2s cubic-bezier(.4,0,.2,1) 1.2s both;
         }
 
         .chess-board {
+            width: 320px;
+            height: 320px;
+            border: 3px solid #b58863;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            background: linear-gradient(45deg, #f0d9b5, #b58863);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             display: grid;
             grid-template-columns: repeat(8, 1fr);
-            width: 340px;
-            height: 340px;
-            border-radius: 24px;
-            border: 4px solid rgba(102, 126, 234, 0.7);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(12px);
-            overflow: hidden;
-            position: relative;
+            grid-template-rows: repeat(8, 1fr);
+            animation: boardFloat 4s ease-in-out infinite, waveFlow 6s ease-in-out infinite;
+        }
+        
+        .chess-board:hover {
+            box-shadow: 0 20px 60px 0 #43cea288, 0 0 0 12px #43cea244;
+            transform: scale(1.05) rotate(-2deg);
+            animation-play-state: paused;
+        }
+
+        @keyframes boardFloat {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            }
+            25% { 
+                transform: translateY(-8px) rotate(0.5deg);
+                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+            }
+            50% { 
+                transform: translateY(-4px) rotate(-0.5deg);
+                box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+            }
+            75% { 
+                transform: translateY(-12px) rotate(1deg);
+                box-shadow: 0 20px 44px rgba(0, 0, 0, 0.45);
+            }
+        }
+
+        @keyframes waveFlow {
+            0%, 100% { 
+                background: linear-gradient(45deg, #f0d9b5, #b58863);
+            }
+            25% { 
+                background: linear-gradient(45deg, #e8d4a8, #a07a50);
+            }
+            50% { 
+                background: linear-gradient(45deg, #d4c095, #8b6b3f);
+            }
+            75% { 
+                background: linear-gradient(45deg, #e0c8a0, #967a4a);
+            }
         }
 
         .chess-square {
             width: 100%;
             height: 100%;
             opacity: 0;
-            transition: opacity 0.5s cubic-bezier(0.4,0,0.2,1), background 0.3s;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(0,0,0,0.1);
+            transform: scale(0.8) rotate(180deg);
+            filter: blur(2px);
         }
+
         .chess-square.light {
             background: linear-gradient(135deg, #f0d9b5 60%, #fffbe6 100%);
+            position: relative;
+            overflow: hidden;
         }
+
         .chess-square.dark {
             background: linear-gradient(135deg, #b58863 60%, #a07a50 100%);
+            position: relative;
+            overflow: hidden;
         }
-        .chess-square.animated {
-            opacity: 1 !important;
-        }
-        .floating-piece {
-            position: absolute;
-            top: 18%;
-            left: 60%;
-            transform: translate(-50%, -50%) scale(1.2);
-            z-index: 2;
-            pointer-events: none;
-            filter: drop-shadow(0 4px 16px rgba(102, 126, 234, 0.25));
-            animation: floatPiece 2.5s ease-in-out infinite alternate;
-        }
-        @keyframes floatPiece {
-            0% { transform: translate(-50%, -50%) scale(1.2) translateY(0); }
-            100% { transform: translate(-50%, -50%) scale(1.2) translateY(-18px); }
-        }
-        /* Hero Section Gradient Overlay */
-        .hero::before {
+
+        .chess-square.light::before,
+        .chess-square.dark::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(120deg, rgba(102,126,234,0.25) 0%, rgba(118,75,162,0.18) 100%);
-            z-index: 0;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+            transform: rotate(45deg);
+            animation: waveSweep 4s ease-in-out infinite;
+            animation-delay: calc(var(--square-index) * 0.1s);
         }
 
-        /* Features Section */
-        .features {
-            padding: 4rem 2rem;
-            background: white;
+        @keyframes waveSweep {
+            0% { 
+                transform: rotate(45deg) translateX(-100%) translateY(-100%);
+                opacity: 0;
+            }
+            50% { 
+                opacity: 0.6;
+            }
+            100% { 
+                transform: rotate(45deg) translateX(100%) translateY(100%);
+                opacity: 0;
+            }
+        }
+        
+        .chess-square.animated {
+            opacity: 1 !important;
+            transform: scale(1) rotate(0deg) !important;
+            filter: blur(0px) !important;
+            animation: wavePattern 3s ease-in-out infinite;
         }
 
-        .features h2 {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            color: #333;
+        .chess-square.animated:nth-child(odd) {
+            animation-delay: 0.3s;
         }
 
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
+        .chess-square.animated:nth-child(3n) {
+            animation-delay: 0.6s;
         }
 
-        .feature-card {
-            text-align: center;
-            padding: 2rem;
-            border-radius: 18px;
-            background: rgba(255,255,255,0.13);
-            box-shadow: 0 2px 16px rgba(67, 206, 162, 0.08);
+        .chess-square.animated:nth-child(5n) {
+            animation-delay: 0.9s;
+        }
+
+        @keyframes wavePattern {
+            0%, 100% { 
+                transform: scale(1) rotate(0deg) translateY(0px);
+                filter: brightness(1) hue-rotate(0deg);
+                border-radius: 0px;
+            }
+            25% { 
+                transform: scale(1.05) rotate(2deg) translateY(-3px);
+                filter: brightness(1.15) hue-rotate(10deg);
+                border-radius: 2px;
+            }
+            50% { 
+                transform: scale(1.08) rotate(-1deg) translateY(-6px);
+                filter: brightness(1.25) hue-rotate(20deg);
+                border-radius: 4px;
+        }
+            75% { 
+                transform: scale(1.03) rotate(3deg) translateY(-2px);
+                filter: brightness(1.1) hue-rotate(15deg);
+                border-radius: 1px;
+            }
+        }
+
+        .chess-board::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #43cea2, #667eea, #06b6d4, #43cea2);
+            background-size: 400% 400%;
+            border-radius: 10px;
+            z-index: -1;
+            animation: borderGlow 4s ease-in-out infinite, borderRotate 8s linear infinite;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { 
+                opacity: 0.7;
+                background-position: 0% 50%;
+            }
+            50% { 
+                opacity: 1;
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes borderRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .floating-piece {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            z-index: 10;
+            animation: floatKing 3.2s ease-in-out infinite alternate, glowKing 2.8s ease-in-out infinite alternate, rotateKing 8s linear infinite;
+        }
+
+        @keyframes floatKing {
+            0% { transform: translate(-50%, -50%) scale(1) rotate(-2deg); }
+            50% { transform: translate(-50%, -65%) scale(1.12) rotate(1deg); }
+            100% { transform: translate(-50%, -55%) scale(1.05) rotate(3deg); }
+        }
+
+        @keyframes glowKing {
+            0% { filter: drop-shadow(0 0 10px #43cea2) drop-shadow(0 0 20px #667eea44); }
+            50% { filter: drop-shadow(0 0 30px #43cea2) drop-shadow(0 0 60px #667eea88); }
+            100% { filter: drop-shadow(0 0 15px #43cea2) drop-shadow(0 0 30px #667eea66); }
+        }
+
+        @keyframes rotateKing {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Animations */
+        @keyframes fadeSlideDown {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+        }
+        }
+
+        @keyframes fadeSlideLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-40px);
+        }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeSlideRight {
+            from {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes boardPopIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.92) translateY(40px);
+            }
+            60% {
+                opacity: 1;
+                transform: scale(1.05) translateY(-10px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+        }
+        }
+
+        @keyframes ctaPopIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) translateY(30px);
+            }
+            60% {
+                opacity: 1;
+                transform: scale(1.08) translateY(-8px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .btn-primary.btn-large {
+            animation: ctaPopIn 0.7s cubic-bezier(.4,0,.2,1) 0.7s both;
+        }
+
+        .btn-primary.btn-large:hover {
+            box-shadow: 0 0 0 6px #43cea244, 0 8px 24px #43cea244;
+            transform: scale(1.06) translateY(-3px);
+            animation: none;
+        }
+
+        /* User Menu */
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
             color: #fff;
-            transition: transform 0.3s ease, background 0.3s;
+            text-align: right;
         }
 
-        .feature-card:hover {
-            transform: translateY(-5px) scale(1.03);
-            background: rgba(102,126,234,0.13);
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
         }
 
-        .feature-icon {
-            font-size: 3rem;
-            color: #43cea2;
-            margin-bottom: 1rem;
-        }
-
-        .feature-card h3 {
-            font-size: 1.25rem;
-            margin-bottom: 0.5rem;
-            color: #fff;
-            font-weight: 800;
-            text-shadow: 0 2px 8px rgba(67,206,162,0.12);
-        }
-
-        .feature-card p {
-            color: #f3f3f3;
-            font-weight: 500;
-            line-height: 1.6;
-            text-shadow: 0 1px 4px rgba(67,206,162,0.10);
+        .user-email {
+            font-size: 0.8rem;
+            opacity: 0.8;
         }
 
         /* Responsive Design */
         @media (max-width: 768px) {
             .hero {
                 flex-direction: column;
-                padding: 2rem 1rem;
+                gap: 2rem;
+                padding: 6rem 1rem 2rem 1rem;
             }
+
             .hero-content {
-                margin-right: 0;
-                margin-bottom: 2rem;
                 text-align: center;
-                padding: 2rem 1rem;
+                max-width: 100%;
             }
-            .chess-animation {
-                width: 90vw;
-                height: 90vw;
-                min-width: 180px;
-                min-height: 180px;
-                max-width: 98vw;
-                max-height: 98vw;
-                margin: 0 auto;
-            }
-            .hero h1 {
+
+            .game-title {
                 font-size: 2.5rem;
             }
-            .hero p {
+
+            .hero-subtitle {
                 font-size: 1.1rem;
             }
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
+
+            .chess-board {
+                width: 280px;
+                height: 280px;
             }
+
+            .navbar {
+                padding: 1rem;
+            }
+
             .nav-buttons {
                 gap: 0.5rem;
             }
+
             .btn {
-                padding: 0.5rem 1rem;
-                font-size: 0.8rem;
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
             }
-        }
-
-        /* User Info (if logged in) */
-        .user-info {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            background: white;
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            z-index: 100;
-        }
-
-        .hidden {
-            display: none;
         }
     </style>
 </head>
@@ -397,30 +577,44 @@
         <path d="M180,-220C220,-180,260,-140,260,-100C260,-60,220,-20,180,20C140,60,100,100,60,140C20,180,-20,220,-60,180C-100,140,-140,100,-140,60C-140,20,-100,-20,-60,-60C-20,-100,20,-140,60,-180C100,-220,140,-260,180,-220Z" fill="#fff"/>
       </g>
     </svg>
+
     <!-- Navigation -->
     <nav class="navbar">
-        <a href="/" class="logo" style="text-decoration: none;">
-            <i class="fas fa-chess-king"></i>
+        <a href="/" class="logo">
+            <svg width="32" height="32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="18" y="38" width="12" height="4" rx="2" fill="#333"/>
+                <rect x="20" y="34" width="8" height="4" rx="2" fill="#b58863"/>
+                <rect x="22" y="12" width="4" height="22" rx="2" fill="#f0d9b5"/>
+                <rect x="20" y="8" width="8" height="6" rx="2" fill="#b58863"/>
+                <rect x="23" y="4" width="2" height="6" rx="1" fill="#333"/>
+            </svg>
             GrandmasterMind
         </a>
+        
         <div class="nav-buttons">
-            <% if (!user) { %>
+            <% if (user) { %>
+                <div class="user-menu">
+                    <div class="user-info">
+                        <div class="user-name"><%= user.name %></div>
+                        <div class="user-email"><%= user.email %></div>
+                    </div>
+                    <a href="/game" class="btn btn-primary">
+                        <i class="fas fa-chess"></i>
+                        Play Game
+                    </a>
+                    <a href="/logout" class="btn btn-outline">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                </div>
+            <% } else { %>
                 <a href="/login" class="btn btn-outline">
                     <i class="fas fa-sign-in-alt"></i>
-                    Login
+                    Sign In
                 </a>
                 <a href="/signup" class="btn btn-primary">
                     <i class="fas fa-user-plus"></i>
-                    Sign Up
-                </a>
-            <% } else { %>
-                <a href="/game" class="btn btn-primary">
-                    <i class="fas fa-play"></i>
-                    Play Game
-                </a>
-                <a href="/logout" class="btn btn-outline">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Logout
+                    Get Started
                 </a>
             <% } %>
         </div>
@@ -429,171 +623,142 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <h1>Master the Game of Kings</h1>
-            <p>Challenge players worldwide in real-time chess matches. Improve your strategy, track your progress, and become a true grandmaster.</p>
+            <h1 class="game-title">GrandmasterMind</h1>
+            <p class="hero-subtitle">Master the game of kings with our intelligent chess platform. Challenge players worldwide, improve your strategy, and become a true grandmaster.</p>
+            
             <div class="hero-buttons">
-                <% if (!user) { %>
-                    <a href="/signup" class="btn btn-primary btn-large">
-                        <i class="fas fa-rocket"></i>
+                <a href="/login" class="btn btn-primary btn-large">
+                    <i class="fas fa-chess"></i>
                         Start Playing
                     </a>
-                    <a href="/login" class="btn btn-outline btn-large">
-                        <i class="fas fa-sign-in-alt"></i>
-                        Login
-                    </a>
-                <% } else { %>
-                    <a href="/game" class="btn btn-primary btn-large">
-                        <i class="fas fa-play"></i>
-                        Continue Playing
-                    </a>
-                    <a href="/profile" class="btn btn-outline btn-large">
-                        <i class="fas fa-user"></i>
-                        View Profile
-                    </a>
-                <% } %>
             </div>
-        </div>
-        <!-- Chess Board Animation -->
-        <div class="chess-animation">
-            <div class="chess-board">
-                <% for(let i = 0; i < 8; i++) { %>
-                    <% for(let j = 0; j < 8; j++) { %>
-                        <div class="chess-square <%= (i + j) % 2 === 0 ? 'light' : 'dark' %>"></div>
+            </div>
+            
+        <div class="chess-section">
+            <div class="chess-board-container">
+                <div class="chess-board">
+                    <% for(let i = 0; i < 8; i++) { %>
+                        <% for(let j = 0; j < 8; j++) { %>
+                            <div class="chess-square <%= (i + j) % 2 === 0 ? 'light' : 'dark' %>"></div>
+                        <% } %>
                     <% } %>
-                <% } %>
-                <!-- Floating Chess Piece (SVG King) -->
+                </div>
                 <div class="floating-piece">
-                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g filter="url(#shadow)">
+                    <svg width="60" height="60" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="18" y="38" width="12" height="4" rx="2" fill="#333"/>
                         <rect x="20" y="34" width="8" height="4" rx="2" fill="#b58863"/>
                         <rect x="22" y="12" width="4" height="22" rx="2" fill="#f0d9b5"/>
                         <rect x="20" y="8" width="8" height="6" rx="2" fill="#b58863"/>
                         <rect x="23" y="4" width="2" height="6" rx="1" fill="#333"/>
-                        </g>
-                        <defs>
-                        <filter id="shadow" x="0" y="0" width="48" height="48" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                            <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#667eea" flood-opacity="0.18"/>
-                        </filter>
-                        </defs>
                     </svg>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="features">
-        <h2>Why Choose GrandmasterMind?</h2>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-globe"></i>
-                </div>
-                <h3>Global Community</h3>
-                <p>Play against chess enthusiasts from around the world and make new friends.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <h3>Track Progress</h3>
-                <p>Monitor your games played, wins, and improvement over time with detailed statistics.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <h3>Secure & Private</h3>
-                <p>Your data is protected with industry-standard security and privacy measures.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-chess-board"></i>
-                </div>
-                <h3>Play Anywhere</h3>
-                <p>Access your games from any device - desktop, tablet, or mobile phone.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- User Info (if logged in) -->
-    <% if (user) { %>
-    <div class="user-info">
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <% if (user.avatar) { %>
-                <img src="<%= user.avatar %>" alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%;">
-            <% } %>
-            <div>
-                <div style="font-weight: 600;"><%= user.name %></div>
-                <div style="font-size: 0.8rem; color: #666;"><%= user.email %></div>
-            </div>
-        </div>
-    </div>
-    <% } %>
-
     <script>
-        // Add some interactive animations
+        // Enhanced chess board animations
         document.addEventListener('DOMContentLoaded', function() {
-            // Animate chess squares in a wave
             const squares = document.querySelectorAll('.chess-square');
+            const board = document.querySelector('.chess-board');
+            console.log('Found', squares.length, 'chess squares');
+            
+            // Add entrance animation to board
+            board.style.opacity = '0';
+            board.style.transform = 'scale(0.5) rotate(180deg)';
+            
+            setTimeout(() => {
+                board.style.transition = 'all 1.2s cubic-bezier(0.4, 0, 0.2, 1)';
+                board.style.opacity = '1';
+                board.style.transform = 'scale(1) rotate(0deg)';
+            }, 500);
+            
+            // Animate squares with wavy pattern effect
             squares.forEach((square, index) => {
+                const row = Math.floor(index / 8);
+                const col = index % 8;
+                // Create wave pattern: diagonal wave from top-left to bottom-right
+                const waveDelay = (row + col) * 80 + Math.sin(row * 0.5) * 100;
+                
+                // Set CSS custom property for wave sweep animation
+                square.style.setProperty('--square-index', index);
+                
                 setTimeout(() => {
                     square.classList.add('animated');
-                }, 80 * (index % 8) + 30 * Math.floor(index / 8));
-            });
+                    
+                    // Add wave ripple effect on click
+                    square.addEventListener('click', function() {
+                        // Create ripple effect
+                        this.style.transform = 'scale(1.15) rotate(8deg) translateY(-8px)';
+                        this.style.filter = 'brightness(1.4) hue-rotate(30deg)';
+                        this.style.borderRadius = '8px';
 
-            // Smooth scroll for navigation links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    document.querySelector(this.getAttribute('href')).scrollIntoView({
-                        behavior: 'smooth'
+                        // Ripple to neighboring squares
+                        const neighbors = getNeighborSquares(index);
+                        neighbors.forEach((neighborIndex, i) => {
+                            if (squares[neighborIndex]) {
+                                setTimeout(() => {
+                                    squares[neighborIndex].style.transform = 'scale(1.08) rotate(4deg) translateY(-4px)';
+                                    squares[neighborIndex].style.filter = 'brightness(1.2) hue-rotate(15deg)';
+                                    setTimeout(() => {
+                                        squares[neighborIndex].style.transform = '';
+                                        squares[neighborIndex].style.filter = '';
+                                    }, 400);
+                                }, i * 50);
+                            }
+                        });
+                        
+                        setTimeout(() => {
+                            this.style.transform = '';
+                            this.style.filter = '';
+                            this.style.borderRadius = '';
+                        }, 500);
                     });
-                });
+                }, waveDelay);
             });
+            
+            // Function to get neighboring squares for ripple effect
+            function getNeighborSquares(index) {
+                const row = Math.floor(index / 8);
+                const col = index % 8;
+                const neighbors = [];
+                
+                // Check all 8 directions
+                const directions = [
+                    [-1, -1], [-1, 0], [-1, 1],
+                    [0, -1],           [0, 1],
+                    [1, -1],  [1, 0],  [1, 1]
+                ];
+                
+                directions.forEach(([dr, dc]) => {
+                    const newRow = row + dr;
+                    const newCol = col + dc;
+                    if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+                        neighbors.push(newRow * 8 + newCol);
+                    }
+                });
+                
+                return neighbors;
+            }
+            
+            // Add hover effects to board
+            board.addEventListener('mouseenter', function() {
+                this.style.animationPlayState = 'paused';
+            });
+            
+            board.addEventListener('mouseleave', function() {
+                this.style.animationPlayState = 'running';
+            });
+            
+            // Fallback: if no squares found, show them after 3 seconds
+            setTimeout(() => {
+                const animatedSquares = document.querySelectorAll('.chess-square.animated');
+                if (animatedSquares.length === 0) {
+                    console.log('Fallback: Making all squares visible');
+                    squares.forEach(square => square.classList.add('animated'));
+                }
+            }, 3000);
         });
     </script>
-=======
-    /* Rotate pieces for black player */
-    .flipped .piece {
-        transform: rotate(180deg);
-    }
-
-    /* Captured pieces container */
-    .captured-pieces {
-        width: 400px;
-        min-height: 50px;
-        margin: 10px auto;
-        padding: 10px;
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 5px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 5px;
-    }
-
-    .captured-piece {
-        font-size: 24px;
-        opacity: 0.7;
-    }
-    </style>
-</head>
-<body>
-    <div class="w-full h-screen flex flex-col items-center justify-center bg-zinc-900">
-        <!-- Captured white pieces -->
-        <div id="capturedWhite" class="captured-pieces"></div>
-        
-        <!-- Chess board -->
-        <div class="chessboard"></div>
-        
-        <!-- Captured black pieces -->
-        <div id="capturedBlack" class="captured-pieces"></div>
-    </div>
-    <script src="/js/chessgame.js"></script>
->>>>>>> e77c3f5237e791f6e5ea0f92c81e3b814919217d
 </body>
 </html>
